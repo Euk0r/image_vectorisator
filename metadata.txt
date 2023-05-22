@@ -12,8 +12,8 @@ email=gekalets2014@yandex.ru
 
 about=THIS PLUGIN IS UNDER DEVOLOPMENT! This plugin is designed to convert satellite images into vector data.
 
-tracker=under devolopment
-repository=http://repo
+tracker=under development
+repository=https://github.com/Euk0r/image_vectorisator
 # End of mandatory metadata
 
 # Recommended items:
@@ -25,7 +25,7 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=python satelite image vectorisation vector euk0r
 
-homepage=under devolopment
+homepage=under development
 category=Plugins
 icon=icon.png
 # experimental flag
