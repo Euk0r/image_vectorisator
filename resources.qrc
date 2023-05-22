@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/image_vectorisator" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,69 @@
+import numpy as np
+import cv2
+import torch
+from PIL import Image
+
+from building_footprint_segmentation.seg.binary.models import ReFineNet
+from building_footprint_segmentation.helpers.normalizer import min_max_image_net
+from building_footprint_segmentation.utils.py_network import (
+    to_input_image_tensor,
+    add_extra_dimension,
+    convert_tensor_to_numpy,
+)
+from building_footprint_segmentation.utils.operations import handle_image_size
+
+MAX_SIZE = 384
+
+def cached_model():
+    refine_net = ReFineNet()
+    path = 'weights/refine.pth'
+    checkpoint = torch.load(path, map_location=torch.device('cpu'))
+    refine_net.load_state_dict(checkpoint, strict=False)
+    return refine_net
+
+model = cached_model()
+
+def process():
+    uploaded_file = "E:/Projects/building projects/BuildingExtraction-master/app/test_2.jpg"
+
+    if uploaded_file is not None:
+        
+        original_image = np.array(Image.open(uploaded_file))
+
+        
+        original_height, original_width = original_image.shape[:2]
+
+        if (original_height, original_width) != (MAX_SIZE, MAX_SIZE):
+            original_image = handle_image_size(original_image, (MAX_SIZE, MAX_SIZE))
+
+        # Apply Normalization
+        normalized_image = min_max_image_net(img=original_image)
+
+        tensor_image = add_extra_dimension(to_input_image_tensor(normalized_image))
+
+        with torch.no_grad():
+            # Perform prediction
+            prediction = model(tensor_image)
+            prediction = prediction.sigmoid()
+
+        prediction_binary = convert_tensor_to_numpy(prediction[0]).reshape(
+            (MAX_SIZE, MAX_SIZE)
+        )
+
+        prediction_3_channels = cv2.cvtColor(prediction_binary, cv2.COLOR_GRAY2RGB)
+
+        dst = cv2.addWeighted(
+            original_image,
+            1,
+            (prediction_3_channels * (0, 255, 0)).astype(np.uint8),
+            0.4,
+            0,
+        )
+
+        im = Image.fromarray(dst)
+        im.save("test_2_result_dst.jpg")
+        im1 = Image.fromarray(prediction_binary*255).convert("L")
+        im1.save("test_2_result_bin.jpg")
+
+if __name__ == "__main__":
+    process()  

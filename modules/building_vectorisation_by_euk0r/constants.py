@@ -1,0 +1,1 @@
+WEIGHTS_PATH = 'C:/Users/gekal/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/image_vectorisator/modules/building_vectorisation_by_euk0r/weights/refine.pth'
